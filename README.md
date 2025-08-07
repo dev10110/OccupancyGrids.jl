@@ -40,6 +40,10 @@ is_occuped(grid, [0.5, 1.2])
 
 <img src="maps/willow_garage/willow_garage.jpg" width="400"/>
 
+### Simple Indoor 1
+
+<img src="maps/simple_indoor_1/simple_indoor_1.png" width="400"/>
+
 ## Creating a Compatible Map w/Illustrator
 
 1. Create a desired map
