@@ -1,8 +1,6 @@
 
 # Based on https://netpbm.sourceforge.net/doc/pgm.html
 
-using StaticArrays
-
 function load_pgm(file_path::AbstractString)
     # Verify that the file extension is .pgm
     if !endswith(file_path, ".pgm")
