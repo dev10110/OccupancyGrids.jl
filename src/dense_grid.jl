@@ -2,25 +2,24 @@ module DenseGrid
 
 export DenseOccupancyGrid
 
-using StaticArrays
 using ..AbstractGrids
 using ..LoadGrid
 
-struct DenseOccupancyGrid{T<:Real,M,N} <: AbstractOccupancyGrid
-    data::SMatrix{M,N,T}
+struct DenseOccupancyGrid{T<:Real} <: AbstractOccupancyGrid
+    data::Matrix{T}
     grid_resolution::Float64  # meters per cell
     inv_resolution::Float64   # 1/grid_resolution for efficiency
 
     # occupied_threshold::Float64 = 0.65
     # free_threshold::Float64 = 0.35
 
-    function DenseOccupancyGrid{T,M,N}(data::SMatrix{M,N,T}, resolution::Float64) where {T<:Real,M,N}
-        new{T,M,N}(data, resolution, 1.0 / resolution)
+    function DenseOccupancyGrid{T}(data::Matrix{T}, resolution::Float64) where {T<:Real}
+        new{T}(data, resolution, 1.0 / resolution)
     end
 end
 
 # Convenient outer constructors
-DenseOccupancyGrid(data::SMatrix{M,N,T}, resolution::Float64) where {T<:Real,M,N} = DenseOccupancyGrid{T,M,N}(data, resolution)
+DenseOccupancyGrid(data::Matrix{T}, resolution::Float64) where {T<:Real} = DenseOccupancyGrid{T}(data, resolution)
 
 function AbstractGrids.is_occupied(grid::DenseOccupancyGrid, x::Real, y::Real)
     # Convert coordinates to indices (1-based) using pre-computed inverse
@@ -41,7 +40,7 @@ function Base.size(grid::DenseOccupancyGrid)::Tuple{Float64,Float64}
 end
 
 # TODO might need to include more information from the info object?
-function LoadGrid.load_grid(info::GridInfo, data::SMatrix{M,N,T})::DenseOccupancyGrid{T,M,N} where {M,N,T<:Real}
+function LoadGrid.load_grid(info::GridInfo, data::Matrix{T})::DenseOccupancyGrid{T} where {T<:Real}
     return DenseOccupancyGrid(data, info.resolution)
 end
 

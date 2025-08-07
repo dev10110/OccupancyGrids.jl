@@ -1,6 +1,8 @@
 
 # Based on https://netpbm.sourceforge.net/doc/pgm.html
 
+using StaticArrays
+
 function load_pgm(file_path::AbstractString)
     # Verify that the file extension is .pgm
     if !endswith(file_path, ".pgm")
@@ -44,6 +46,9 @@ function load_pgm(file_path::AbstractString)
         # Read the pixel data into a (width, height) matrix
         pixel_data = Vector{data_type}(undef, width * height)
         read!(file, pixel_data)
-        return reshape(pixel_data, (height, width))
+        pixel_matrix = reshape(pixel_data, (height, width))
+
+        # Convert to Matrix of Float64, normalized to [0.0, 1.0]
+        return Matrix(Float64.(pixel_matrix) ./ max_value)
     end
 end

@@ -12,7 +12,7 @@ Grids can be loaded from various sources:
 
 export load_grid, GridInfo
 
-using StaticArrays
+using StaticArrays, YAML
 using Base.Enums
 
 using ..FileUtil

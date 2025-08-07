@@ -5,6 +5,8 @@ version = "0.1.0"
 
 [deps]
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+YAML = "ddb6d928-2868-570f-bddf-ab3f9cf99eb6"
 
 [compat]
 StaticArrays = "1.9.14"
+YAML = "0.4.14"
