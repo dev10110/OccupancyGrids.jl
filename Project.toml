@@ -2,3 +2,9 @@ name = "OccupancyGrids"
 uuid = "e6db0ae7-37ec-4765-aaf2-b047b4032ee3"
 authors = ["mvielmet <mvielmet@umich.edu>"]
 version = "0.1.0"
+
+[deps]
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
+[compat]
+StaticArrays = "1.9.14"
