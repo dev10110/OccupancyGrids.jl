@@ -50,7 +50,7 @@ is_occuped(grid, [0.5, 1.2])
 2. Export As a PNG file, using a white background & high PPI settings
 3. Using Imagemagick, run:
 ```bash
-magick 
+magick output_file.png output_file.pgm
 ```
 
 ## Adding an Environment to the Package
