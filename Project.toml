@@ -1,0 +1,4 @@
+name = "OccupancyGrids"
+uuid = "e6db0ae7-37ec-4765-aaf2-b047b4032ee3"
+authors = ["mvielmet <mvielmet@umich.edu>"]
+version = "0.1.0"
