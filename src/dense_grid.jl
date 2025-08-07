@@ -51,6 +51,18 @@ struct DenseOccupancyGrid{T<:Real} <: OccupancyGrid
     end
 end
 
+"""
+    inflate_obstacles!(data::Matrix{T}, inflation_cells::Int) where {T<:Real}
+
+Inflates obstacles in the grid by a given number of cells.
+
+This function uses convolution with a kernel of ones to expand the occupied regions.
+The result is clamped between 0.0 and 1.0.
+
+# Arguments
+- `data::Matrix{T}`: The occupancy grid data, modified in-place.
+- `inflation_cells::Int`: The number of cells to inflate obstacles by.
+"""
 function inflate_obstacles!(data::Matrix{T}, inflation_cells::Int) where {T<:Real}
     @show inflation_cells
     kernel = ones(inflation_cells, inflation_cells)
@@ -66,10 +78,18 @@ function inflate_obstacles!(data::Matrix{T}, inflation_cells::Int) where {T<:Rea
     data .= clamp.(new_data[start_row:end_row, start_col:end_col], 0.0, 1.0)
 end
 
-# Convenient outer constructors
+"""
+    DenseOccupancyGrid(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64; kwargs...) where {T<:Real}
+
+A convenience constructor that delegates to the inner `DenseOccupancyGrid{T}` constructor.
+"""
 DenseOccupancyGrid(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64; kwargs...) where {T<:Real} = DenseOccupancyGrid{T}(data, resolution, occupied_threshold, free_threshold; kwargs...)
 
-# Constructor with default thresholds for backwards compatibility
+"""
+    DenseOccupancyGrid(data::Matrix{T}, resolution::Float64; kwargs...) where {T<:Real}
+
+A convenience constructor that uses default thresholds for `occupied_threshold` (0.65) and `free_threshold` (0.35).
+"""
 DenseOccupancyGrid(data::Matrix{T}, resolution::Float64; kwargs...) where {T<:Real} = DenseOccupancyGrid{T}(data, resolution, 0.65, 0.35; kwargs...)
 
 """
