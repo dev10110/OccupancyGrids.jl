@@ -26,6 +26,20 @@ const INCLUDED_GRID_INFO = Dict(
     WillowGarage => joinpath(BASE_PATH, "willow_garage")
 )
 
+"""
+    GridInfo
+
+A struct containing metadata about an occupancy grid.
+
+# Fields
+- `file_type::String`: The file type of the grid data (e.g., "pgm").
+- `grid_file::String`: The name of the file containing the grid data.
+- `resolution::Float64`: The resolution of the grid in meters per cell.
+- `origin::SVector{3,Float64}`: The 3D origin of the grid in world coordinates.
+- `negate::Bool`: Whether to negate the occupancy values.
+- `occuped_threshold::Float64`: The threshold for a cell to be considered occupied.
+- `free_threshold::Float64`: The threshold for a cell to be considered free.
+"""
 struct GridInfo
     file_type::String
     grid_file::String
@@ -39,7 +53,9 @@ end
 
 """
     load_grid(grid::IncludedGrid)
-Load a grid from the included grids defined in `INCLUDED_GRID_INFO`.
+
+Load a grid from the included grids defined in `INCLUDED_GRID_INFO`. This is a convenience
+function for loading maps that are packaged with this library.
 """
 function load_grid(grid::IncludedGrid)
     return load_grid(INCLUDED_GRID_INFO[grid])
@@ -47,7 +63,9 @@ end
 
 """
     load_grid(directory::AbstractString)
-Load a grid from a directory containing a 'grid_info.yaml' file and the grid data files
+
+Load a grid from a directory. The directory must contain a `grid_info.yaml` file with
+metadata about the grid, and the grid data file itself (e.g., a PGM file).
 """
 function load_grid(directory::AbstractString)
     info = load_grid_info(directory)
@@ -55,11 +73,30 @@ function load_grid(directory::AbstractString)
     return load_grid(info, data)
 end
 
+"""
+    load_grid(info::GridInfo, data)
+
+Construct a concrete `AbstractOccupancyGrid` from a `GridInfo` object and the grid data.
+This method must be implemented by concrete grid types (e.g., `DenseOccupancyGrid`).
+"""
 function load_grid(info::GridInfo, data)
     throw(MethodError(load_grid, (info, data)))
 end
 
+"""
+    load_grid_info(directory::AbstractString)::GridInfo
 
+Load grid metadata from a `grid_info.yaml` file in the specified directory.
+
+The YAML file can contain the following fields:
+- `file_type`: (Optional) The file type of the grid data (default: "pgm").
+- `grid_file`: (Optional) The name of the grid data file (default: "grid.pgm").
+- `resolution`: (Optional) The grid resolution in meters per cell (default: 0.1).
+- `origin`: (Optional) The 3D grid origin (default: [0.0, 0.0, 0.0]).
+- `negate`: (Optional) Whether to negate occupancy values (default: false).
+- `occupied_threshold`: (Optional) Occupancy threshold (default: 0.65).
+- `free_threshold`: (Optional) Free space threshold (default: 0.35).
+"""
 function load_grid_info(directory::AbstractString)::GridInfo
     info_path = joinpath(directory, "grid_info.yaml")
 
@@ -78,6 +115,12 @@ function load_grid_info(directory::AbstractString)::GridInfo
     return GridInfo(file_type, grid_file, resolution, SVector{3,Float64}(origin), negate, occupied_threshold, free_threshold)
 end
 
+"""
+    load_grid_data(directory::AbstractString, info::GridInfo)
+
+Load the grid data from the file specified in the `GridInfo` object.
+Currently, only PGM files are supported.
+"""
 function load_grid_data(directory::AbstractString, info::GridInfo)
     data_path = joinpath(directory, info.grid_file)
     if info.file_type == "pgm"
