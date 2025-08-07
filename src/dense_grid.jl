@@ -43,7 +43,6 @@ struct DenseOccupancyGrid{T<:Real} <: OccupancyGrid
         end
 
         if inflation != 0.0
-            @show "inflating"
             inflate_obstacles!(data, ceil(Int, inflation / resolution))
         end
 
@@ -64,7 +63,6 @@ The result is clamped between 0.0 and 1.0.
 - `inflation_cells::Int`: The number of cells to inflate obstacles by.
 """
 function inflate_obstacles!(data::Matrix{T}, inflation_cells::Int) where {T<:Real}
-    @show inflation_cells
     kernel = ones(inflation_cells, inflation_cells)
     new_data = conv(data, kernel)
     # Trim new data matrix to the original size, taking from the center

@@ -27,7 +27,6 @@ function load_pgm(file_path::AbstractString)
         # Read width, height, and max value
         dimensions = split(line)
         if length(dimensions) != 2
-            @show dimensions
             throw(ArgumentError("Invalid PGM file -- dimensions wrong"))
         end
         width, height = parse.(Int, dimensions)
