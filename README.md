@@ -1,7 +1,5 @@
 # OccupancyGrids.jl
 
-[![CI](https://github.com/mvielmetti/OccupancyGrids.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/mvielmetti/OccupancyGrids.jl/actions/workflows/CI.yml)
-
 A Julia package for working with occupancy grids.
 
 ## Installation
@@ -41,3 +39,18 @@ is_occuped(grid, [0.5, 1.2])
 ### Willow Garage
 
 <img src="maps/willow_garage/willow_garage.jpg" width="400"/>
+
+## Creating a Compatible Map w/Illustrator
+
+1. Create a desired map
+2. Export As a PNG file, using a white background & high PPI settings
+3. Using Imagemagick, run:
+```bash
+magick 
+```
+
+## Adding an Environment to the Package
+1. Create the folder in the maps/ directory
+2. Add an enum entry in 'src/load_grid.jl'
+3. Add a dict entry in 'src/load_grid.jl'
+4. Export the enum from LoadGrid and OccupancyGrid modules

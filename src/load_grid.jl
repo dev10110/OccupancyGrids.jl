@@ -17,14 +17,16 @@ using Base.Enums
 
 using ..FileUtil
 
-export IncludedGrid, WillowGarage
-@enum IncludedGrid WillowGarage
+## IMPORTANT: When adding new included grids, update the enum, 
+## export statement, and package level export (yes this is annoying)
+export IncludedGrid, WillowGarage, SimpleIndoor1
+@enum IncludedGrid WillowGarage SimpleIndoor1
 
 const BASE_PATH = joinpath(@__DIR__, "..", "maps")
 
 const INCLUDED_GRID_INFO = Dict(
-    WillowGarage => joinpath(BASE_PATH, "willow_garage")
-)
+    WillowGarage => joinpath(BASE_PATH, "willow_garage"),
+    SimpleIndoor1 => joinpath(BASE_PATH, "simple_indoor_1"))
 
 """
     GridInfo
