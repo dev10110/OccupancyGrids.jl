@@ -24,6 +24,10 @@ A concrete implementation of an occupancy grid using a dense matrix.
 - `inv_resolution::Float64`: The inverse of the resolution, pre-calculated for efficiency in coordinate transformations.
 - `occupied_threshold::Float64`: The threshold above which a cell is considered occupied.
 - `free_threshold::Float64`: The threshold below which a cell is considered free.
+
+# Keyword Arguments
+- `inflation::Float64`: The inflation radius in meters. Obstacles will be inflated by this amount. Defaults to `0.0`.
+- `negate::Bool`: If `true`, the input `data` is negated (i.e., `1.0 - data`). This is useful when the input data has `1` for free and `0` for occupied. Defaults to `false`.
 """
 struct DenseOccupancyGrid{T<:Real} <: OccupancyGrid
     data::Matrix{T}
