@@ -44,9 +44,9 @@ function load_pgm(file_path::AbstractString)
         # Read the pixel data into a (width, height) matrix
         pixel_data = Vector{data_type}(undef, width * height)
         read!(file, pixel_data)
-        pixel_matrix = reshape(pixel_data, (height, width))
+        pixel_matrix = reshape(pixel_data, (width, height))'
 
         # Convert to Matrix of Float64, normalized to [0.0, 1.0]
-        return Matrix(Float64.(pixel_matrix) ./ max_value)
+        return Matrix((Float64.(pixel_matrix) ./ max_value))
     end
 end

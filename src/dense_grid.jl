@@ -9,6 +9,7 @@ module DenseGrid
 
 export DenseOccupancyGrid
 
+using DSP
 using ..AbstractGrids
 using ..LoadGrid
 
@@ -31,16 +32,41 @@ struct DenseOccupancyGrid{T<:Real} <: OccupancyGrid
     occupied_threshold::Float64
     free_threshold::Float64
 
-    function DenseOccupancyGrid{T}(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64) where {T<:Real}
+    function DenseOccupancyGrid{T}(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64; inflation::Float64=0.0, negate::Bool=false) where {T<:Real}
+        # This is weird -- 0 is free, 1 is occupied. But 1 is white, 0 is black.
+        if !negate
+            data .= 1.0 .- data
+        end
+
+        if inflation != 0.0
+            @show "inflating"
+            inflate_obstacles!(data, ceil(Int, inflation / resolution))
+        end
+
         new{T}(data, resolution, 1.0 / resolution, occupied_threshold, free_threshold)
     end
 end
 
+function inflate_obstacles!(data::Matrix{T}, inflation_cells::Int) where {T<:Real}
+    @show inflation_cells
+    kernel = ones(inflation_cells, inflation_cells)
+    new_data = conv(data, kernel)
+    # Trim new data matrix to the original size, taking from the center
+
+    rows, cols = size(data)
+    start_row = ceil(Int, inflation_cells / 2)
+    start_col = ceil(Int, inflation_cells / 2)
+    end_row = start_row + rows - 1
+    end_col = start_col + cols - 1
+
+    data .= clamp.(new_data[start_row:end_row, start_col:end_col], 0.0, 1.0)
+end
+
 # Convenient outer constructors
-DenseOccupancyGrid(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64) where {T<:Real} = DenseOccupancyGrid{T}(data, resolution, occupied_threshold, free_threshold)
+DenseOccupancyGrid(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64; kwargs...) where {T<:Real} = DenseOccupancyGrid{T}(data, resolution, occupied_threshold, free_threshold; kwargs...)
 
 # Constructor with default thresholds for backwards compatibility
-DenseOccupancyGrid(data::Matrix{T}, resolution::Float64) where {T<:Real} = DenseOccupancyGrid{T}(data, resolution, 0.65, 0.35)
+DenseOccupancyGrid(data::Matrix{T}, resolution::Float64; kwargs...) where {T<:Real} = DenseOccupancyGrid{T}(data, resolution, 0.65, 0.35; kwargs...)
 
 """
     is_occupied(grid::DenseOccupancyGrid, x::Real, y::Real) -> Bool
@@ -90,8 +116,8 @@ This function is part of the `LoadGrid` interface and allows for the creation of
 `DenseOccupancyGrid` when loading a grid from a file. Uses the thresholds specified
 in the GridInfo object.
 """
-function LoadGrid.load_grid(info::GridInfo, data::Matrix{T})::DenseOccupancyGrid{T} where {T<:Real}
-    return DenseOccupancyGrid(data, info.resolution, info.occuped_threshold, info.free_threshold)
+function LoadGrid.load_grid(info::GridInfo, data::Matrix{T}; kwargs...)::DenseOccupancyGrid{T} where {T<:Real}
+    return DenseOccupancyGrid(data, info.resolution, info.occuped_threshold, info.free_threshold; kwargs...)
 end
 
 

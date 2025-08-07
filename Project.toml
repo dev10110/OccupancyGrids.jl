@@ -4,9 +4,13 @@ authors = ["mvielmet <mvielmet@umich.edu>"]
 version = "0.1.0"
 
 [deps]
+DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
+ImageView = "86fae568-95e7-573e-a6b2-d8a6b900c9ef"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 YAML = "ddb6d928-2868-570f-bddf-ab3f9cf99eb6"
 
 [compat]
+DSP = "0.8.4"
+ImageView = "0.12.6"
 StaticArrays = "1.9.14"
 YAML = "0.4.14"

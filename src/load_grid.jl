@@ -59,8 +59,8 @@ end
 Load a grid from the included grids defined in `INCLUDED_GRID_INFO`. This is a convenience
 function for loading maps that are packaged with this library.
 """
-function load_grid(grid::IncludedGrid)
-    return load_grid(INCLUDED_GRID_INFO[grid])
+function load_grid(grid::IncludedGrid; kwargs...)
+    return load_grid(INCLUDED_GRID_INFO[grid]; kwargs...)
 end
 
 """
@@ -69,10 +69,10 @@ end
 Load a grid from a directory. The directory must contain a `grid_info.yaml` file with
 metadata about the grid, and the grid data file itself (e.g., a PGM file).
 """
-function load_grid(directory::AbstractString)
+function load_grid(directory::AbstractString; kwargs...)
     info = load_grid_info(directory)
     data = load_grid_data(directory, info)
-    return load_grid(info, data)
+    return load_grid(info, data; kwargs...)
 end
 
 """
