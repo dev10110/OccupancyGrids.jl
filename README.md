@@ -11,7 +11,7 @@ Pkg.add("OccupancyGrids")
 
 ## Usage
 
-This package provides a set of tools for working with occupancy grids. The core type is `AbstractOccupancyGrid`, which can be instantiated as a `DenseOccupancyGrid`.
+This package provides a set of tools for working with occupancy grids. The core type is `OccupancyGrid`, which can be instantiated as a `DenseOccupancyGrid`.
 
 ### Loading a Map
 

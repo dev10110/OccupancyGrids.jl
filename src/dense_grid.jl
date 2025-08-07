@@ -2,7 +2,7 @@
     DenseGrid
 
 This module implements a dense occupancy grid, where the grid is represented by a
-dense matrix. This is a straightforward implementation of the `AbstractOccupancyGrid`
+dense matrix. This is a straightforward implementation of the `OccupancyGrid`
 interface.
 """
 module DenseGrid
@@ -13,7 +13,7 @@ using ..AbstractGrids
 using ..LoadGrid
 
 """
-    DenseOccupancyGrid{T<:Real} <: AbstractOccupancyGrid
+    DenseOccupancyGrid{T<:Real} <: OccupancyGrid
 
 A concrete implementation of an occupancy grid using a dense matrix.
 
@@ -24,7 +24,7 @@ A concrete implementation of an occupancy grid using a dense matrix.
 - `occupied_threshold::Float64`: The threshold above which a cell is considered occupied.
 - `free_threshold::Float64`: The threshold below which a cell is considered free.
 """
-struct DenseOccupancyGrid{T<:Real} <: AbstractOccupancyGrid
+struct DenseOccupancyGrid{T<:Real} <: OccupancyGrid
     data::Matrix{T}
     grid_resolution::Float64  # meters per cell
     inv_resolution::Float64   # 1/grid_resolution for efficiency

@@ -78,7 +78,7 @@ end
 """
     load_grid(info::GridInfo, data)
 
-Construct a concrete `AbstractOccupancyGrid` from a `GridInfo` object and the grid data.
+Construct a concrete `OccupancyGrid` from a `GridInfo` object and the grid data.
 This method must be implemented by concrete grid types (e.g., `DenseOccupancyGrid`).
 """
 function load_grid(info::GridInfo, data)
