@@ -8,7 +8,7 @@ export DenseOccupancyGrid
 
 # Defined in LoadGrid
 export load_grid, GridInfo
-export IncludedGrid, WillowGarage, SimpleIndoor1
+export IncludedGrid, WillowGarage, SimpleIndoor, SimpleIndoor1
 
 include("file_util/FileUtil.jl")
 using .FileUtil

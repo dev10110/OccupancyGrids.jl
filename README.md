@@ -40,6 +40,12 @@ is_occuped(grid, [0.5, 1.2])
 
 <img src="maps/willow_garage/willow_garage.jpg" width="400"/>
 
+### Simple Indoor
+
+A simple indoor environment.
+
+<img src="maps/simple_indoor/simple_indoor.png" width="400"/>
+
 ### Simple Indoor 1
 
 <img src="maps/simple_indoor_1/simple_indoor_1.png" width="400"/>
