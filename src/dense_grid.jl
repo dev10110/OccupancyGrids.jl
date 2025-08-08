@@ -104,10 +104,12 @@ than the free_threshold.
 """
 function AbstractGrids.is_occupied(grid::DenseOccupancyGrid, x::Real, y::Real)
     # Convert coordinates to indices (1-based) using pre-computed inverse
-    i = Int(floor(x * grid.inv_resolution)) + 1
-    j = Int(floor(y * grid.inv_resolution)) + 1
+    # x corresponds to columns (j), y corresponds to rows (i)
+    j = Int(floor(x * grid.inv_resolution)) + 1  # column index from x
+    i = Int(floor(y * grid.inv_resolution)) + 1  # row index from y
 
     # Bounds check with early return for out-of-bounds
+    # Check rows (i) against size(..., 1) and columns (j) against size(..., 2)
     if i < 1 || i > size(grid.data, 1) || j < 1 || j > size(grid.data, 2)
         throw(BoundsError(grid, (i, j)))
     end
@@ -120,12 +122,12 @@ end
 
 Returns the physical dimensions of the grid in world coordinates (meters).
 
-Calculates the total width and height of the grid by multiplying the number of rows
-and columns in the data matrix by the grid resolution.
+Returns (width, height) corresponding to (x_max, y_max) in world coordinates.
 """
 function Base.size(grid::DenseOccupancyGrid)::Tuple{Float64,Float64}
     rows, cols = size(grid.data)
-    return (rows * grid.grid_resolution, cols * grid.grid_resolution)
+    # Return (width, height) = (x_extent, y_extent) = (cols * resolution, rows * resolution)
+    return (cols * grid.grid_resolution, rows * grid.grid_resolution)
 end
 
 """
