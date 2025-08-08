@@ -19,15 +19,17 @@ using ..FileUtil
 
 ## IMPORTANT: When adding new included grids, update the enum, 
 ## export statement, and package level export (yes this is annoying)
-export IncludedGrid, WillowGarage, SimpleIndoor, SimpleIndoor1
-@enum IncludedGrid WillowGarage SimpleIndoor SimpleIndoor1
+export IncludedGrid, WillowGarage, SimpleIndoor, SimpleIndoor1, SimpleIndoor2
+@enum IncludedGrid WillowGarage SimpleIndoor SimpleIndoor1 SimpleIndoor2
 
 const BASE_PATH = joinpath(@__DIR__, "..", "maps")
 
 const INCLUDED_GRID_INFO = Dict(
     WillowGarage => joinpath(BASE_PATH, "willow_garage"),
     SimpleIndoor => joinpath(BASE_PATH, "simple_indoor"),
-    SimpleIndoor1 => joinpath(BASE_PATH, "simple_indoor_1"))
+    SimpleIndoor1 => joinpath(BASE_PATH, "simple_indoor_1"),
+    SimpleIndoor2 => joinpath(BASE_PATH, "simple_indoor_2")
+)
 
 """
     GridInfo
