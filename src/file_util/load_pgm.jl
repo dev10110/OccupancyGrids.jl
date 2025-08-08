@@ -46,6 +46,8 @@ function load_pgm(file_path::AbstractString)
         pixel_matrix = reshape(pixel_data, (width, height))'
 
         # Convert to Matrix of Float64, normalized to [0.0, 1.0]
-        return Matrix((Float64.(pixel_matrix) ./ max_value))
+        # Flip vertically so origin is at bottom-left instead of top-left
+        normalized_matrix = Matrix((Float64.(pixel_matrix) ./ max_value))
+        return reverse(normalized_matrix, dims=1)
     end
 end
