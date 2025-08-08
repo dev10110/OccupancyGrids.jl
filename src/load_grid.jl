@@ -26,7 +26,7 @@ const BASE_PATH = joinpath(@__DIR__, "..", "maps")
 
 const INCLUDED_GRID_INFO = Dict(
     WillowGarage => joinpath(BASE_PATH, "willow_garage"),
-    SimpleIndoor => joinpath(BASE_PATH, "simple_indoor")
+    SimpleIndoor => joinpath(BASE_PATH, "simple_indoor"),
     SimpleIndoor1 => joinpath(BASE_PATH, "simple_indoor_1"))
 
 """
