@@ -30,7 +30,7 @@ A concrete implementation of an occupancy grid using a dense matrix.
 # Keyword Arguments
 - `inflation::Float64`: The inflation radius in meters. Obstacles will be inflated by this amount. Defaults to `0.0`.
 - `negate::Bool`: If `true`, the input `data` is negated (i.e., `1.0 - data`). This is useful when the input data has `1` for free and `0` for occupied. Defaults to `false`.
-- `compute_sdf::Bool`: If `true`, the signed distance field (SDF) will be computed during initialization. Defaults to `false`.
+- `compute_sdf::Bool`: If `true`, the signed distance field (SDF) will be computed during initialization. Defaults to `true`.
 """
 struct DenseOccupancyGrid{T<:Real} <: OccupancyGrid
     data::Matrix{T}
@@ -40,7 +40,7 @@ struct DenseOccupancyGrid{T<:Real} <: OccupancyGrid
     occupied_threshold::Float64
     free_threshold::Float64
 
-    function DenseOccupancyGrid{T}(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64; inflation::Float64=0.0, negate::Bool=false, compute_sdf::Bool=false) where {T<:Real}
+    function DenseOccupancyGrid{T}(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64; inflation::Float64=0.0, negate::Bool=false, compute_sdf::Bool=true) where {T<:Real}
         # This is weird -- 0 is free, 1 is occupied. But 1 is white, 0 is black.
         if !negate
             data .= 1.0 .- data
@@ -236,14 +236,14 @@ Plots the occupancy grid as a heatmap using Plots.jl.
 
     # Plot as heatmap background with proper coordinates
     @series begin
-            seriestype := :heatmap
-            colormap --> :grays
-            alpha --> 0.8
-            aspect_ratio --> :equal
-            x := x_range
-            y := y_range
-            z := inverted_data
-        end
+        seriestype := :heatmap
+        colormap --> :grays
+        alpha --> 0.8
+        aspect_ratio --> :equal
+        x := x_range
+        y := y_range
+        z := inverted_data
+    end
 end
 
 end # module DenseGrid
