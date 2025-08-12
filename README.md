@@ -24,6 +24,13 @@ using OccupancyGrids
 grid = load_grid(WillowGarage) # WillowGarage is an enum of tyope IncludedMaps
 ```
 
+To plot the environment
+```
+using Plots
+plot(grid)
+```
+which plots the map using a heatmap. 
+
 ### Checking for Occupancy
 
 Once you have a grid, you can check if a particular location is occupied:
