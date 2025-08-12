@@ -7,7 +7,7 @@ functions.
 """
 module AbstractGrids
 
-export OccupancyGrid, is_occupied
+export OccupancyGrid, is_occupied, sdf
 
 """
     OccupancyGrid
@@ -43,6 +43,8 @@ function is_occupied(grid::OccupancyGrid, x::Real, y::Real)
     throw(MethodError(is_occupied, (grid, x, y)))
 end
 
+
+
 # Convenience methods that forward to the main method
 """
     is_occupied(grid::OccupancyGrid, point::Tuple{<:Real,<:Real}) -> Bool
@@ -53,6 +55,26 @@ Convenience methods to check for occupancy using a tuple or vector of coordinate
 is_occupied(grid::OccupancyGrid, point::Tuple{<:Real,<:Real}) = is_occupied(grid, point[1], point[2])
 is_occupied(grid::OccupancyGrid, point::AbstractVector{<:Real}) = is_occupied(grid, point[1], point[2])
 
+
+"""
+    sdf(grid::OccupancyGrid, x::Real, y::Real) -> Float64
+
+Returns the signed distance field value for the location (x, y) in world coordinates. 
+Returns 0 if the location is occupied, positive values for free space indicating 
+distance to nearest obstacle.
+"""
+function sdf(grid::OccupancyGrid, x::Real, y::Real)
+    throw(MethodError(sdf, (grid, x, y)))
+end
+
+"""
+    sdf(grid::OccupancyGrid, point::Tuple{<:Real,<:Real}) -> Float64
+    sdf(grid::OccupancyGrid, point::AbstractVector{<:Real}) -> Float64
+
+Convenience methods to compute the signed distance field using a tuple or vector of coordinates.
+"""
+sdf(grid::OccupancyGrid, point::Tuple{<:Real,<:Real}) = sdf(grid, point[1], point[2])
+sdf(grid::OccupancyGrid, point::AbstractVector{<:Real}) = sdf(grid, point[1], point[2])
 # Get physical dimensions of the grid in world coordinates
 """
     Base.size(grid::OccupancyGrid) -> Tuple{Float64, Float64}

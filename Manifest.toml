@@ -2,7 +2,7 @@
 
 julia_version = "1.11.6"
 manifest_format = "2.0"
-project_hash = "3829b0dd847a6626ed6983d7e0cefccfdd1ce10f"
+project_hash = "29f64ad0af9f1ae8c16ebb26ba438d12b15b39a7"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -66,6 +66,12 @@ version = "0.8.4"
 
     [deps.DSP.weakdeps]
     OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
+
+[[deps.DataStructures]]
+deps = ["OrderedCollections"]
+git-tree-sha1 = "76b3b7c3925d943edf158ddb7f693ba54eb297a5"
+uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+version = "0.19.0"
 
 [[deps.Dates]]
 deps = ["Printf"]

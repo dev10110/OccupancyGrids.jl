@@ -1,7 +1,7 @@
 module OccupancyGrids
 
 # Defined in AbstractGrids
-export OccupancyGrid, is_occupied
+export OccupancyGrid, is_occupied, sdf
 
 # Defined in DenseGrid
 export DenseOccupancyGrid

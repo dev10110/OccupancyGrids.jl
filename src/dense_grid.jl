@@ -9,7 +9,7 @@ module DenseGrid
 
 export DenseOccupancyGrid
 
-using DSP
+using DSP, DataStructures
 using ..AbstractGrids
 using ..LoadGrid
 
@@ -20,6 +20,7 @@ A concrete implementation of an occupancy grid using a dense matrix.
 
 # Fields
 - `data::Matrix{T}`: The matrix holding the occupancy values. The type `T` is typically a subtype of `Real` (e.g., `Float64`).
+- `sdf::Union{Nothing, Matrix{T}}`: The signed distance field (optional).
 - `grid_resolution::Float64`: The resolution of the grid in meters per cell.
 - `inv_resolution::Float64`: The inverse of the resolution, pre-calculated for efficiency in coordinate transformations.
 - `occupied_threshold::Float64`: The threshold above which a cell is considered occupied.
@@ -28,15 +29,17 @@ A concrete implementation of an occupancy grid using a dense matrix.
 # Keyword Arguments
 - `inflation::Float64`: The inflation radius in meters. Obstacles will be inflated by this amount. Defaults to `0.0`.
 - `negate::Bool`: If `true`, the input `data` is negated (i.e., `1.0 - data`). This is useful when the input data has `1` for free and `0` for occupied. Defaults to `false`.
+- `compute_sdf::Bool`: If `true`, the signed distance field (SDF) will be computed during initialization. Defaults to `false`.
 """
 struct DenseOccupancyGrid{T<:Real} <: OccupancyGrid
     data::Matrix{T}
+    sdf::Union{Nothing,Matrix{T}} # Optional ESDF
     grid_resolution::Float64  # meters per cell
     inv_resolution::Float64   # 1/grid_resolution for efficiency
     occupied_threshold::Float64
     free_threshold::Float64
 
-    function DenseOccupancyGrid{T}(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64; inflation::Float64=0.0, negate::Bool=false) where {T<:Real}
+    function DenseOccupancyGrid{T}(data::Matrix{T}, resolution::Float64, occupied_threshold::Float64, free_threshold::Float64; inflation::Float64=0.0, negate::Bool=false, compute_sdf::Bool=false) where {T<:Real}
         # This is weird -- 0 is free, 1 is occupied. But 1 is white, 0 is black.
         if !negate
             data .= 1.0 .- data
@@ -46,7 +49,12 @@ struct DenseOccupancyGrid{T<:Real} <: OccupancyGrid
             inflate_obstacles!(data, ceil(Int, inflation / resolution))
         end
 
-        new{T}(data, resolution, 1.0 / resolution, occupied_threshold, free_threshold)
+        sdf = nothing
+        if compute_sdf
+            sdf = compute_signed_distance_field(data, resolution, free_threshold)
+        end
+
+        new{T}(data, sdf, resolution, 1.0 / resolution, occupied_threshold, free_threshold)
     end
 end
 
@@ -117,6 +125,23 @@ function AbstractGrids.is_occupied(grid::DenseOccupancyGrid, x::Real, y::Real)
     return grid.data[i, j] > grid.free_threshold
 end
 
+function AbstractGrids.sdf(grid::DenseOccupancyGrid, x::Real, y::Real)
+    if isnothing(grid.sdf)
+        throw(MethodError(sdf, (grid, x, y), "The signed distance field (SDF) has not been computed for this grid (requires compute_sdf = true)."))
+    end
+
+    # Convert coordinates to indices (1-based) using pre-computed inverse
+    j = Int(floor(x * grid.inv_resolution)) + 1  # column index from x
+    i = Int(floor(y * grid.inv_resolution)) + 1  # row index from y
+
+    # Bounds check with early return for out-of-bounds
+    if i < 1 || i > size(grid.sdf, 1) || j < 1 || j > size(grid.sdf, 2)
+        throw(BoundsError(grid, (i, j)))
+    end
+
+    return grid.sdf[i, j]
+end
+
 """
     Base.size(grid::DenseOccupancyGrid) -> Tuple{Float64, Float64}
 
@@ -144,5 +169,48 @@ function LoadGrid.load_grid(info::GridInfo, data::Matrix{T}; kwargs...)::DenseOc
     return DenseOccupancyGrid(data, info.resolution, info.occuped_threshold, info.free_threshold; kwargs...)
 end
 
+function compute_signed_distance_field(data::Matrix{T}, resolution::Float64, free_threshold::Float64) where {T<:Real}
+    rows, cols = size(data)
+    sdf = fill(Inf, size(data)) # Initialize SDF with Inf
+
+    q = Queue{Tuple{Int,Int,Float64}}() # (i, j, distance)
+
+    # Initialize the queue with all occupied cells (distance = 0)
+    for i in 1:rows
+        for j in 1:cols
+            if data[i, j] > free_threshold
+                sdf[i, j] = 0.0
+                enqueue!(q, (i, j, 0.0))
+            end
+        end
+    end
+
+    # Perform a breadth-first search (BFS) to compute the SDF
+    while !isempty(q)
+        (i, j, current_dist) = dequeue!(q)
+
+        # If current cell already has a shorter distance, skip it
+        if current_dist < sdf[i, j]
+            continue
+        end
+
+        # Check neighboring cells (4-connectivity)
+        new_dist = current_dist + resolution
+        for (di, dj) in [(-1, 0), (1, 0), (0, -1), (0, 1)]
+            ni, nj = i + di, j + dj
+
+            # If neighbor cell is in bounds
+            if ni >= 1 && ni <= rows && nj >= 1 && nj <= cols
+                # If we found a shorter path to this neighbor
+                if new_dist < sdf[ni, nj]
+                    sdf[ni, nj] = new_dist
+                    enqueue!(q, (ni, nj, new_dist))
+                end
+            end
+        end
+    end
+
+    return sdf
+end
 
 end # module DenseGrid
