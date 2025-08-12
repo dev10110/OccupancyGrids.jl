@@ -28,12 +28,20 @@ You can also pass keyword arguments to `load_grid` to modify the grid upon loadi
 
 - `inflation`: (Float64) The inflation radius in meters. Obstacles will be inflated by this amount. Defaults to `0.0`.
 - `negate`: (Bool) If `true`, the input `data` is negated (i.e., `1.0 - data`). This is useful when the input data has `1` for free and `0` for occupied. Defaults to `false`.
+- `compute_sdf`: (Bool) If `true`, a sdf will be computed for the map.
 
 Example:
 ```julia
 # Load the Willow Garage map with a 0.5 meter inflation radius
-grid = load_grid(WillowGarage, inflation=0.5)
+grid = load_grid(WillowGarage; inflation=0.5, compute_sdf=true, negate=false)
 ```
+
+To plot the environment
+```
+using Plots
+plot(grid)
+```
+which plots the map using a heatmap. 
 
 ### Checking for Occupancy
 
@@ -91,3 +99,7 @@ magick output_file.png output_file.pgm
 2. Add an enum entry in 'src/load_grid.jl'
 3. Add a dict entry in 'src/load_grid.jl'
 4. Export the enum from LoadGrid and OccupancyGrid modules
+
+## Changelog
+
+v0.1.1: added RecipesBase and plotting functionality
