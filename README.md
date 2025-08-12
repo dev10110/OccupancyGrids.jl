@@ -64,3 +64,7 @@ magick output_file.png output_file.pgm
 2. Add an enum entry in 'src/load_grid.jl'
 3. Add a dict entry in 'src/load_grid.jl'
 4. Export the enum from LoadGrid and OccupancyGrid modules
+
+## Changelog
+
+v0.1.1: added RecipesBase and plotting functionality

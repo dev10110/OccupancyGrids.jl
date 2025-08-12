@@ -12,6 +12,7 @@ export DenseOccupancyGrid
 using DSP
 using ..AbstractGrids
 using ..LoadGrid
+using RecipesBase
 
 """
     DenseOccupancyGrid{T<:Real} <: OccupancyGrid
@@ -144,5 +145,37 @@ function LoadGrid.load_grid(info::GridInfo, data::Matrix{T}; kwargs...)::DenseOc
     return DenseOccupancyGrid(data, info.resolution, info.occuped_threshold, info.free_threshold; kwargs...)
 end
 
+
+"""
+    plot!(grid::DenseOccupancyGrid; kwargs...)
+    plot(grid::DenseOccupancyGrid; kwargs...)
+
+Plots the occupancy grid as a heatmap using Plots.jl.
+"""
+@recipe function f(grid::DenseOccupancyGrid)
+
+    # Get the occupancy grid data
+    grid_data = grid.data
+    grid_resolution = grid.grid_resolution
+
+    # Create inverted colormap (0 = white, 1 = black)
+    inverted_data = 1.0 .- grid_data
+
+    # Calculate proper coordinate ranges
+    n_rows, n_cols = size(grid_data)
+    x_range = range(0, n_cols * grid_resolution, length=n_cols)
+    y_range = range(0, n_rows * grid_resolution, length=n_rows)
+
+    # Plot as heatmap background with proper coordinates
+    @series begin
+            seriestype := :heatmap
+            colormap --> :grays
+            alpha --> 0.8
+            aspect_ratio --> :equal
+            x := x_range
+            y := y_range
+            z := inverted_data
+        end
+end
 
 end # module DenseGrid
